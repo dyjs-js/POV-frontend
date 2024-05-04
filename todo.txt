@@ -1,0 +1,7 @@
+- 사용한 패키지
+    - react query
+    - axios : fetch하는 adapter
+
+- react query 5/4
+todo 
+- authentication user 5/5~6

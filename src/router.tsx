@@ -3,6 +3,7 @@ import Root from "./components/Root";
 import Home from "./routes/Home";
 import Users from "./routes/Users";
 import NotFound from "./routes/NotFound";
+import BookDetail from "./routes/BookDetail";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       {
         path: "users",
         element: <Users />,
+      },
+      {
+        path: "books/:bookPk",
+        element: <BookDetail />,
       },
     ],
   },

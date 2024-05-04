@@ -1,8 +1,19 @@
-import { Box, Grid, Skeleton, SkeletonText } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
 import Book from "../components/Book";
+import MainSkeleton from "../components/MainSkeleton";
+import { useQuery } from "@tanstack/react-query";
+import { getBooks } from "../api";
+import { IBookList } from "../types";
+
 export default function Home() {
+  const { isLoading, data } = useQuery<IBookList[]>({
+    queryKey: ["books"],
+    queryFn: getBooks,
+  });
+
   return (
     <Grid
+      mt={10}
       px={{
         base: 10,
         lg: 40,
@@ -18,24 +29,31 @@ export default function Home() {
         "2xl": "repeat(4, 1fr)",
       }}
     >
-      <Box>
-        <Skeleton height={300} mb={5} rounded={"3xl"} />
-        <SkeletonText w="50%" noOfLines={2} mb={4} />
-        <SkeletonText w="50%" noOfLines={1} />
-      </Box>
-      <Book />
-      <Box>
-        <Skeleton height={300} mb={3} rounded={"3xl"} />
-        <SkeletonText w="50%" noOfLines={3} />
-      </Box>
-      <Box>
-        <Skeleton height={300} mb={3} rounded={"3xl"} />
-        <SkeletonText w="50%" noOfLines={3} />
-      </Box>
-      <Box>
-        <Skeleton height={300} mb={3} rounded={"3xl"} />
-        <SkeletonText w="50%" noOfLines={3} />
-      </Box>
+      {isLoading ? (
+        <>
+          <MainSkeleton />
+          <MainSkeleton />
+          <MainSkeleton />
+          <MainSkeleton />
+          <MainSkeleton />
+          <MainSkeleton />
+          <MainSkeleton />
+          <MainSkeleton />
+          <MainSkeleton />
+          <MainSkeleton />
+        </>
+      ) : null}
+      {data &&
+        Array.isArray(data) &&
+        data.map((book) => (
+          <Book
+            key={book.pk}
+            pk={book.pk}
+            imageUrl={book.photos[0].file}
+            title={book.title}
+            author={book.author}
+          />
+        ))}
     </Grid>
   );
 }
