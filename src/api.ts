@@ -1,20 +1,55 @@
-import {
-  QueryFunctionContext,
-  QueryKeyHashFunction,
-} from "@tanstack/react-query";
+import { QueryFunctionContext } from "@tanstack/react-query";
 import axios from "axios";
-
-const Instacne = axios.create({
+import Cookie from "js-cookie";
+const instance = axios.create({
   baseURL: "http://127.0.0.1:8000/api/v1/",
+  withCredentials: true,
 });
 
-export async function getBooks() {
-  const response = await Instacne.get(`books/`);
-  return response.data;
+export const getBooks = () =>
+  instance.get(`books/`).then((response) => response.data);
+
+export const getBook = ({ queryKey }: QueryFunctionContext) => {
+  const [_, bookPk] = queryKey;
+  return instance.get(`books/${bookPk}`).then((response) => response.data);
+};
+
+export const getMe = () =>
+  instance.get(`users/me`).then((reponse) => reponse.data);
+
+export const logOut = () =>
+  instance
+    .post(`users/log-out`, null, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
+      },
+    })
+    .then((response) => response.data);
+
+export interface IUsernameLoginVariables {
+  username: string;
+  password: string;
 }
 
-export async function getBook({ queryKey }: QueryFunctionContext) {
-  const [_, bookPk] = queryKey;
-  const respnse = await Instacne.get(`books/${bookPk}`);
-  return respnse.data;
+export interface IUsernameLoginSuccess {
+  ok: string;
 }
+export interface IUsernameLoginError {
+  error: string;
+}
+
+export const usernameLogIn = ({
+  username,
+  password,
+}: IUsernameLoginVariables) =>
+  instance
+    .post(
+      `/users/log-in`,
+      { username, password },
+      {
+        headers: {
+          "X-CSRFToken": Cookie.get("csrftoken") || "",
+        },
+      }
+    )
+    .then((response) => response.data);

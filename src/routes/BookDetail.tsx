@@ -13,7 +13,6 @@ import {
   HStack,
   Text,
   Avatar,
-  IconButton,
   Button,
 } from "@chakra-ui/react";
 import { FaRegHeart } from "react-icons/fa";
