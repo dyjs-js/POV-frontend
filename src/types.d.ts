@@ -12,6 +12,7 @@ interface IBookList {
   is_owner: boolean;
   is_liked: boolean;
   is_liked_count: number;
+  is_public: boolean;
   photos: IBookPhotoPhoto[];
 }
 
@@ -23,7 +24,6 @@ export interface IBookOwner {
 
 export interface IBookDetail extends IBookList {
   pk: number;
-
   is_owner: boolean;
   is_liked: boolean;
   is_liked_count: number;

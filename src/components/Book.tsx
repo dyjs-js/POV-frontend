@@ -7,17 +7,33 @@ import {
   Text,
   HStack,
 } from "@chakra-ui/react";
-import { FaRegHeart, FaStar } from "react-icons/fa";
-import { Link } from "react-router-dom";
-
+import { FaCamera, FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 interface BookProps {
   imageUrl: string;
   title: string;
   author: string;
   pk: number;
+  is_liked_count: number;
+  is_liked: boolean;
+  is_public: boolean;
+  is_owner: boolean;
 }
 
-export default function Book({ pk, imageUrl, title, author }: BookProps) {
+export default function Book({
+  pk,
+  imageUrl,
+  title,
+  author,
+  is_liked,
+  is_owner,
+}: BookProps) {
+  const navigate = useNavigate();
+  const onCameraClick = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    navigate(`/books/${pk}/photos`);
+  };
+
   return (
     <Link to={`/books/${pk}`}>
       {" "}
@@ -29,10 +45,20 @@ export default function Book({ pk, imageUrl, title, author }: BookProps) {
               variant={"unstyled"}
               position={"absolute"}
               top={0}
+              right={10}
+              onClick={onCameraClick}
+              color={"white"}
+            >
+              {is_owner ? <FaCamera size="20px" /> : null}
+            </Button>
+            <Button
+              variant={"unstyled"}
+              position={"absolute"}
+              top={0}
               right={0}
               color={"white"}
             >
-              <FaRegHeart size="20px" />
+              {is_liked ? <FaHeart size="20px" /> : <FaRegHeart size="20px" />}
             </Button>
           </Box>
           <Box>
@@ -56,7 +82,7 @@ export default function Book({ pk, imageUrl, title, author }: BookProps) {
             </Text>
           </Box>
           <Text fontSize={"sm"} color="gray.600" as="b">
-            review by
+            published by
           </Text>
         </Box>
       </VStack>

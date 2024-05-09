@@ -53,3 +53,44 @@ export const usernameLogIn = ({
       }
     )
     .then((response) => response.data);
+
+export interface IUploadBookVariables {
+  review_title: string;
+  title: string;
+  author: string;
+  publisher: string;
+  content: string;
+  summary: string;
+  is_public: boolean;
+}
+export const uploadBook = ({
+  review_title,
+  title,
+  author,
+  publisher,
+  content,
+  summary,
+  is_public,
+}: IUploadBookVariables) =>
+  instance
+    .post(
+      `books/`,
+      { review_title, title, author, publisher, content, summary, is_public },
+      {
+        headers: {
+          "X-CSRFToken": Cookie.get("csrftoken") || "",
+        },
+      }
+    )
+    .then((response) => response.data);
+
+export const likeBook = ({ queryKey }: QueryFunctionContext) => {
+  const [_, bookPk] = queryKey;
+  return instance
+    .post(`books/${bookPk}/liked`, null, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
+      },
+    })
+    .then((response) => response.data);
+};

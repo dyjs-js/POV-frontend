@@ -15,7 +15,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
 import useUser from "../lib/useUser";
@@ -61,11 +61,14 @@ export default function Header() {
           title: "Done!",
           description: "See you later!",
         });
+        queryClient.invalidateQueries({ queryKey: ["books"] });
       }
     },
   });
+  const navaigate = useNavigate();
   const onLogOut = async () => {
     mutation.mutate();
+    navaigate("/");
   };
   return (
     <HStack
@@ -100,6 +103,12 @@ export default function Header() {
                 <Avatar name={user.name} src={user.avatar} size={"md"} />
               </MenuButton>
               <MenuList>
+                <Link to="/books/mypage">
+                  <MenuItem>MyPage</MenuItem>
+                </Link>
+                <Link to="/books/upload">
+                  <MenuItem>Upload review</MenuItem>
+                </Link>
                 <MenuItem onClick={onLogOut}>LogOut</MenuItem>
               </MenuList>
             </Menu>

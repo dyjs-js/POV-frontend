@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { getBook } from "../api";
+import { getBook, likeBook } from "../api";
 import { IBookDetail } from "../types";
 import {
   Box,
@@ -14,6 +14,11 @@ import {
   Text,
   Avatar,
   Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  useToast,
 } from "@chakra-ui/react";
 import { FaRegHeart } from "react-icons/fa";
 
@@ -23,6 +28,12 @@ export default function BookDetail() {
     queryKey: [`books`, bookPk],
     queryFn: getBook,
   });
+
+  const toast = useToast();
+  const queryClient = useQueryClient();
+
+  const handleLike = async () => {};
+
   return (
     <Box
       mt={10}
@@ -33,7 +44,7 @@ export default function BookDetail() {
       }}
       py={10}
     >
-      <HStack justifyContent={"space-between"}>
+      <HStack justifyContent="space-between">
         <Skeleton
           rounded={"lg"}
           height={"45px"}
@@ -50,7 +61,17 @@ export default function BookDetail() {
               <Text>{data?.is_liked_count} likes</Text>
             </Box>
           </Box>
-          <Button>Edit</Button>
+          {data?.is_owner ? (
+            <Menu>
+              <MenuButton>
+                <Button>edit</Button>
+              </MenuButton>
+              <MenuList>
+                <MenuItem>delete</MenuItem>
+                <MenuItem>edit</MenuItem>
+              </MenuList>
+            </Menu>
+          ) : null}
         </HStack>
       </HStack>
       <Skeleton
@@ -71,22 +92,21 @@ export default function BookDetail() {
         overflow={"hidden"}
         gap={2}
         height="60vh"
-        templateRows={"1fr 1fr"}
-        templateColumns={"repeat(4, 1fr)"}
+        templateRows={"1fr"}
+        templateColumns={"repeat(2, 1fr)"}
       >
-        {[0, 1, 2, 3, 4].map((index) => (
-          <GridItem
-            colSpan={index === 0 ? 2 : 1}
-            rowSpan={index === 0 ? 2 : 1}
-            overflow={"hidden"}
-            key={index}
-          >
-            <Image
-              objectFit={"cover"}
-              w="100%"
-              h="100%"
-              src={data?.photos[index].file}
-            />
+        {[0, 1].map((index) => (
+          <GridItem colSpan={1} rowSpan={1} overflow={"hidden"} key={index}>
+            <Skeleton isLoaded={!isLoading} h="100%" w="100%">
+              {data?.photos && data.photos.length > 0 ? (
+                <Image
+                  objectFit={"cover"}
+                  w="100%"
+                  h="100%"
+                  src={data?.photos[index].file}
+                />
+              ) : null}
+            </Skeleton>
           </GridItem>
         ))}
       </Grid>
@@ -113,7 +133,10 @@ export default function BookDetail() {
         </Box>
       </VStack>
       <Box mt={10} mb={10}>
-        <Text>#구병모 #파과 #위즈덤하우스 #한국소설 #우울</Text>
+        <Text>
+          #{data?.author} #{data?.title}{" "}
+          {data?.publisher && `#${data.publisher}`} #한국소설 #우울
+        </Text>
       </Box>
     </Box>
   );

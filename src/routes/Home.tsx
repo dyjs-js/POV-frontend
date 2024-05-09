@@ -49,9 +49,13 @@ export default function Home() {
           <Book
             key={book.pk}
             pk={book.pk}
-            imageUrl={book.photos[0].file}
+            is_owner={book.is_owner}
+            imageUrl={book.photos[0]?.file}
             title={book.title}
             author={book.author}
+            is_liked_count={book.is_liked_count}
+            is_liked={book.is_liked}
+            is_public={book.is_public}
           />
         ))}
     </Grid>
