@@ -56,6 +56,7 @@ export default function Home() {
             is_liked_count={book.is_liked_count}
             is_liked={book.is_liked}
             is_public={book.is_public}
+            rating={book.rating}
           />
         ))}
     </Grid>

@@ -41,7 +41,7 @@ export default function UploadReview() {
         title: "Book review created",
         position: "bottom-right",
       });
-      //navigate(`/books/${data.pk}`);
+      navigate(`/books/${data.id}`);
     },
   });
   const handleReviewTypeChange = (

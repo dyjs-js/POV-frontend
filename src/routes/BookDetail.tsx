@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getBook, likeBook } from "../api";
 import { IBookDetail } from "../types";
@@ -32,8 +32,43 @@ export default function BookDetail() {
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const handleLike = async () => {};
+  const handleLike = async () => {
+    try {
+      if (!data) return;
 
+      if (data.is_liked) {
+        // 이미 좋아요한 경우, 좋아요 취소 요청 보내기
+        await likeBook(data.id);
+      } else {
+        // 좋아요하지 않은 경우, 좋아요 요청 보내기
+        await likeBook(data.id);
+      }
+
+      // 새로운 데이터를 가져오기 위해 쿼리 재요청
+      queryClient.invalidateQueries({
+        queryKey: [`books`, bookPk],
+      });
+
+      // 성공 메시지 표시
+      toast({
+        title: "Success",
+        description: data.is_liked ? "Unliked the book." : "Liked the book.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      // 오류 처리
+      console.error("Error toggling like:", error);
+      toast({
+        title: "Error",
+        description: "Failed to toggle like.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
   return (
     <Box
       mt={10}
@@ -56,10 +91,14 @@ export default function BookDetail() {
 
         <HStack>
           <Box px={5}>
-            <FaRegHeart size="30px" />
-            <Box>
-              <Text>{data?.is_liked_count} likes</Text>
-            </Box>
+            <Button
+              onClick={handleLike}
+              leftIcon={<FaRegHeart />}
+              colorScheme={data?.is_liked ? "red" : "gray"}
+              variant="outline"
+            >
+              {data?.is_liked ? data?.is_liked_count : data?.is_liked_count}
+            </Button>
           </Box>
           {data?.is_owner ? (
             <Menu>

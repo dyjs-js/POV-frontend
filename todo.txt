@@ -11,6 +11,7 @@ todo
 - csrf [v]  5/6
 - edit 조건 [v] 5/7
 - upload review [v] 5/9
+- My page [...] 5/10~ grid만들고 나머지 api불러오기
 - upload photo
 - signup []
 - movie []

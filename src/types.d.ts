@@ -9,6 +9,7 @@ interface IBookList {
   title: string;
   author: string;
   review_title: string;
+  rating: number;
   is_owner: boolean;
   is_liked: boolean;
   is_liked_count: number;
@@ -23,7 +24,7 @@ export interface IBookOwner {
 }
 
 export interface IBookDetail extends IBookList {
-  pk: number;
+  id: number;
   is_owner: boolean;
   is_liked: boolean;
   is_liked_count: number;
@@ -36,6 +37,7 @@ export interface IBookDetail extends IBookList {
   content: string;
   summary: string;
   is_public: boolean;
+  rating: number;
   user: IBookOwner;
   photos: IBookPhotoPhoto[];
 }
