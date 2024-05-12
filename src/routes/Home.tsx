@@ -53,6 +53,7 @@ export default function Home() {
             imageUrl={book.photos[0]?.file}
             title={book.title}
             author={book.author}
+            review_title={book.review_title}
             is_liked_count={book.is_liked_count}
             is_liked={book.is_liked}
             is_public={book.is_public}

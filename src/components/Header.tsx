@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   HStack,
+  Heading,
   IconButton,
   Menu,
   MenuButton,
@@ -56,12 +57,12 @@ export default function Header() {
     onSuccess: () => {
       if (toastId.current) {
         queryClient.refetchQueries({ queryKey: ["me"] });
+        queryClient.invalidateQueries({ queryKey: ["books"] });
         toast.update(toastId.current, {
           status: "success",
           title: "Done!",
           description: "See you later!",
         });
-        queryClient.invalidateQueries({ queryKey: ["books"] });
       }
     },
   });
@@ -81,6 +82,9 @@ export default function Header() {
         <Link to={"/"}>
           <FaHome size={"48"} />
         </Link>
+      </Box>
+      <Box>
+        <Heading>Point of View</Heading>
       </Box>
       <HStack spacing={2}>
         <IconButton

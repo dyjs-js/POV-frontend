@@ -153,7 +153,7 @@ export default function UploadReview() {
             <FormControl>
               <FormLabel>별점</FormLabel>
               <NumberInput min={1} max={5}>
-                <NumberInputField />
+                <NumberInputField {...register("rating", { required: true })} />
                 <NumberInputStepper>
                   <NumberIncrementStepper />
                   <NumberDecrementStepper />

@@ -3,6 +3,10 @@ interface IBookPhotoPhoto {
   file: string;
   description: string;
 }
+interface IBookGptPhoto {
+  pk: number;
+  file: string;
+}
 
 interface IBookList {
   pk: number;
@@ -40,4 +44,5 @@ export interface IBookDetail extends IBookList {
   rating: number;
   user: IBookOwner;
   photos: IBookPhotoPhoto[];
+  gptphotos: IBookGptPhoto[];
 }

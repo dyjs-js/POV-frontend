@@ -1,6 +1,6 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { getBook, likeBook } from "../api";
+import { createGptPhoto, getBook, likeBook } from "../api";
 import { IBookDetail } from "../types";
 import {
   Box,
@@ -20,7 +20,7 @@ import {
   MenuItem,
   useToast,
 } from "@chakra-ui/react";
-import { FaRegHeart } from "react-icons/fa";
+import { FaPaintBrush, FaRegHeart } from "react-icons/fa";
 
 export default function BookDetail() {
   const { bookPk } = useParams();
@@ -28,9 +28,30 @@ export default function BookDetail() {
     queryKey: [`books`, bookPk],
     queryFn: getBook,
   });
-
   const toast = useToast();
   const queryClient = useQueryClient();
+  const createGptPhotoMutation = useMutation({
+    mutationFn: createGptPhoto,
+    onSuccess: (data: any) => {
+      toast({
+        status: "success",
+        title: "AI Image created!",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "sever connect delayed!",
+        status: "error",
+      });
+    },
+  });
+
+  const onCreateClick = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (bookPk) {
+      createGptPhotoMutation.mutate(bookPk);
+    }
+  };
 
   const handleLike = async () => {
     try {
@@ -49,7 +70,6 @@ export default function BookDetail() {
         queryKey: [`books`, bookPk],
       });
 
-      // 성공 메시지 표시
       toast({
         title: "Success",
         description: data.is_liked ? "Unliked the book." : "Liked the book.",
@@ -58,7 +78,6 @@ export default function BookDetail() {
         isClosable: true,
       });
     } catch (error) {
-      // 오류 처리
       console.error("Error toggling like:", error);
       toast({
         title: "Error",
@@ -90,6 +109,16 @@ export default function BookDetail() {
         </Skeleton>
 
         <HStack>
+          <Box>
+            <Button
+              onClick={onCreateClick}
+              leftIcon={<FaPaintBrush />}
+              colorScheme={"gray"}
+              variant="outline"
+            >
+              AI 이미지 생성
+            </Button>
+          </Box>
           <Box px={5}>
             <Button
               onClick={handleLike}
@@ -102,12 +131,10 @@ export default function BookDetail() {
           </Box>
           {data?.is_owner ? (
             <Menu>
-              <MenuButton>
-                <Button>edit</Button>
-              </MenuButton>
+              <MenuButton as={Button}>edit</MenuButton>
               <MenuList>
-                <MenuItem>delete</MenuItem>
                 <MenuItem>edit</MenuItem>
+                <MenuItem>delete</MenuItem>
               </MenuList>
             </Menu>
           ) : null}
@@ -135,17 +162,23 @@ export default function BookDetail() {
         templateColumns={"repeat(2, 1fr)"}
       >
         {[0, 1].map((index) => (
-          <GridItem colSpan={1} rowSpan={1} overflow={"hidden"} key={index}>
-            <Skeleton isLoaded={!isLoading} h="100%" w="100%">
-              {data?.photos && data.photos.length > 0 ? (
-                <Image
-                  objectFit={"cover"}
-                  w="100%"
-                  h="100%"
-                  src={data?.photos[index].file}
-                />
-              ) : null}
-            </Skeleton>
+          <GridItem key={index}>
+            {/* 첫 번째 이미지 */}
+            {index === 0 && (
+              <Image objectFit="cover" w="100%" src={data?.photos[0].file} />
+            )}
+            {/* 두 번째 이미지 */}
+            {index === 1 && (
+              <Image
+                objectFit="cover"
+                w="100%"
+                src={
+                  data?.gptphotos && data.gptphotos.length > 0
+                    ? data?.gptphotos[0].file
+                    : data?.photos[1]?.file
+                }
+              />
+            )}
           </GridItem>
         ))}
       </Grid>
@@ -159,7 +192,7 @@ export default function BookDetail() {
           >
             <Heading fontSize={"large"}>{data?.review_title}</Heading>
           </Skeleton>
-          <Box>
+          <Box width="100%" justifyContent="flex-start">
             <Text>published by {data?.user.name}</Text>
           </Box>
         </VStack>
@@ -168,13 +201,13 @@ export default function BookDetail() {
       <VStack>
         <Box>
           <Text>{data?.created_at}</Text>
-          {data?.content}
+          <Text>{data?.content}</Text>
         </Box>
       </VStack>
       <Box mt={10} mb={10}>
         <Text>
           #{data?.author} #{data?.title}{" "}
-          {data?.publisher && `#${data.publisher}`} #한국소설 #우울
+          {data?.publisher && `#${data.publisher}`}
         </Text>
       </Box>
     </Box>

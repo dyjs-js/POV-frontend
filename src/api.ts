@@ -64,35 +64,13 @@ export interface IUploadBookVariables {
   is_public: boolean;
   rating: number;
 }
-export const uploadBook = ({
-  review_title,
-  title,
-  author,
-  publisher,
-  content,
-  summary,
-  is_public,
-  rating,
-}: IUploadBookVariables) =>
+export const uploadBook = (variables: IUploadBookVariables) =>
   instance
-    .post(
-      `books/`,
-      {
-        review_title,
-        rating,
-        title,
-        author,
-        publisher,
-        content,
-        summary,
-        is_public,
+    .post(`books/`, variables, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
       },
-      {
-        headers: {
-          "X-CSRFToken": Cookie.get("csrftoken") || "",
-        },
-      }
-    )
+    })
     .then((response) => response.data);
 
 export const likeBook = async (bookPk: number) => {
@@ -104,3 +82,61 @@ export const likeBook = async (bookPk: number) => {
 
   return response.data;
 };
+
+export const getUploadURL = () =>
+  instance
+    .post(`medias/photos/get-url`, null, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
+      },
+    })
+    .then((response) => response.data);
+
+export interface IUploadImageVariables {
+  file: FileList;
+  uploadURL: string;
+}
+
+export const uploadImage = ({ file, uploadURL }: IUploadImageVariables) => {
+  const form = new FormData();
+  form.append("file", file[0]);
+  return axios
+    .post(uploadURL, form, {
+      headers: {
+        "content-Type": "multipart/form-data",
+      },
+    })
+    .then((reponse) => reponse.data);
+};
+
+export interface ICreatePhotoVariables {
+  description: string;
+  file: string;
+  bookPk: string;
+}
+
+export const createPhoto = ({
+  description,
+  file,
+  bookPk,
+}: ICreatePhotoVariables) =>
+  instance
+    .post(
+      `books/${bookPk}/photos`,
+      { description, file },
+      {
+        headers: {
+          "X-CSRFToken": Cookie.get("csrftoken") || "",
+        },
+      }
+    )
+    .then((response) => response.data);
+
+export const createGptPhoto = (bookPk: string) =>
+  instance
+    .post(`books/${bookPk}/gptphotos`, null, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
+      },
+    })
+    .then((response) => response.data);

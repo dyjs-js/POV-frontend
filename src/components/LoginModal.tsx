@@ -61,6 +61,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       });
       onClose();
       queryClient.refetchQueries({ queryKey: ["me"] });
+      queryClient.refetchQueries({ queryKey: ["books"] });
+
       reset();
     },
     onError: (error) => {

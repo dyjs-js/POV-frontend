@@ -11,20 +11,31 @@ import {
   CardHeader,
   Flex,
   Divider,
+  Grid,
 } from "@chakra-ui/react";
 import ProtectedPage from "../components/ProtectedPage";
 import { FaRegHeart } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import { IBookList } from "../types";
 import { getBooks } from "../api";
-import { useParams } from "react-router-dom";
 import MainSkeleton from "../components/MainSkeleton";
+import Book from "../components/Book";
+import useUser from "../lib/useUser";
+
+function getReviewCount(reviews: IBookList[] | undefined): number {
+  if (!reviews) return 0;
+  return reviews.filter((review) => review.is_owner).length;
+}
 
 export default function MyPage() {
+  const { user } = useUser();
+
   const { isLoading, data } = useQuery<IBookList[]>({
     queryKey: ["books"],
     queryFn: getBooks,
   });
+
+  const bookReivewCount = getReviewCount(data);
   return (
     <ProtectedPage>
       <Box
@@ -41,17 +52,21 @@ export default function MyPage() {
           <CardHeader>
             <Flex>
               <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-                <Avatar name="yjs" size={"md"} />
-
+                <Avatar name={user.name} src={user.avatar} size={"md"} />
                 <Box>
-                  <Heading size="md">nm21622@naver.com</Heading>
-                  <Text>지수</Text>
+                  <Heading size="md">{user.username}</Heading>
+                  <Text mt={1}>{user.email}</Text>
                 </Box>
               </Flex>
             </Flex>
           </CardHeader>
           <CardBody>
-            <Text>나의 책 리뷰 : 2개</Text>
+            <Text mb={2}>
+              마지막 로그인 :{" "}
+              {new Date(user.last_login).toLocaleDateString("ko-KR")}
+            </Text>
+            <Text>{`나의 책 리뷰 : ${bookReivewCount}개`}</Text>
+
             <Text>나의 영화 리뷰 : 2개</Text>
           </CardBody>
           <Image
@@ -81,21 +96,76 @@ export default function MyPage() {
           </CardFooter>
         </Card>
         <Divider />
-
-        <Box mt={10} mb={100}>
-          <Heading mb={5}>My book reviews</Heading>
-          <Box w="300px" h="300px">
-            <MainSkeleton />
-          </Box>
+        <Box mt={10} mb={5}>
+          <Heading>My book reviews</Heading>
         </Box>
-
+        <Grid
+          mt={10}
+          mb={20}
+          columnGap={4}
+          rowGap={8}
+          templateColumns={{
+            sm: "1fr",
+            md: "1fr 1fr",
+            lg: "repeat(2, 1fr)",
+            xl: "repeat(3, 1fr)",
+            "2xl": "repeat(4, 1fr)",
+          }}
+        >
+          {isLoading ? (
+            <>
+              <MainSkeleton />
+              <MainSkeleton />
+              <MainSkeleton />
+              <MainSkeleton />
+            </>
+          ) : (
+            <>
+              {data &&
+                Array.isArray(data) &&
+                data
+                  .filter((book) => book.is_owner)
+                  .map((book) => (
+                    <Book
+                      key={book.pk}
+                      pk={book.pk}
+                      is_owner={book.is_owner}
+                      imageUrl={book.photos[0]?.file}
+                      title={book.title}
+                      author={book.author}
+                      review_title={book.review_title}
+                      is_liked_count={book.is_liked_count}
+                      is_liked={book.is_liked}
+                      is_public={book.is_public}
+                      rating={book.rating}
+                    />
+                  ))}
+            </>
+          )}
+        </Grid>
         <Divider />
-        <Box mt={10} mb={100}>
-          <Heading mb={5}>My Movie reviews</Heading>
-          <Box w="300px" h="300px">
-            <MainSkeleton />
-          </Box>
+        <Box mt={10} mb={5}>
+          <Heading>My Movie reviews</Heading>
         </Box>
+        <Grid
+          mt={10}
+          mb={20}
+          columnGap={4}
+          rowGap={8}
+          templateColumns={{
+            sm: "1fr",
+            md: "1fr 1fr",
+            lg: "repeat(2, 1fr)",
+            xl: "repeat(3, 1fr)",
+            "2xl": "repeat(4, 1fr)",
+          }}
+        >
+          <Box>
+            <Box w="300px" h="300px">
+              <MainSkeleton />
+            </Box>
+          </Box>
+        </Grid>
       </Box>
     </ProtectedPage>
   );

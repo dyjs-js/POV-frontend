@@ -13,12 +13,13 @@ interface BookProps {
   imageUrl: string;
   title: string;
   author: string;
+  review_title: string;
+  rating: number;
   pk: number;
   is_liked_count: number;
   is_liked: boolean;
   is_public: boolean;
   is_owner: boolean;
-  rating: number;
 }
 
 export default function Book({
@@ -26,6 +27,7 @@ export default function Book({
   imageUrl,
   title,
   author,
+  review_title,
   is_liked,
   is_owner,
   is_public,
@@ -36,64 +38,60 @@ export default function Book({
     event.preventDefault();
     navigate(`/books/${pk}/photos`);
   };
-
+  if (!is_public) {
+    return null; // is_public이 false인 경우 아무것도 렌더링하지 않음
+  }
   return (
     <Link to={`/books/${pk}`}>
       {" "}
       <VStack alignItems={"flex-start"}>
-        {is_public ? (
+        <Box>
+          <Box overflow={"hidden"} position="relative" mb={3} rounded={"3xl"}>
+            <Image objectFit={"cover"} minH="300" maxH="500" src={imageUrl} />
+            <Button
+              variant={"unstyled"}
+              position={"absolute"}
+              top={0}
+              right={10}
+              onClick={onCameraClick}
+              color={"white"}
+            >
+              {is_owner ? <FaCamera size="20px" /> : null}
+            </Button>
+            <Button
+              variant={"unstyled"}
+              position={"absolute"}
+              top={0}
+              right={0}
+              color={"white"}
+            >
+              {is_liked ? <FaHeart size="20px" /> : <FaRegHeart size="20px" />}
+            </Button>
+          </Box>
           <Box>
-            <Box overflow={"hidden"} position="relative" mb={3} rounded={"3xl"}>
-              <Image w="100%" h="300" src={imageUrl} />
-              <Button
-                variant={"unstyled"}
-                position={"absolute"}
-                top={0}
-                right={10}
-                onClick={onCameraClick}
-                color={"white"}
-              >
-                {is_owner ? <FaCamera size="20px" /> : null}
-              </Button>
-              <Button
-                variant={"unstyled"}
-                position={"absolute"}
-                top={0}
-                right={0}
-                color={"white"}
-              >
-                {is_liked ? (
-                  <FaHeart size="20px" />
-                ) : (
-                  <FaRegHeart size="20px" />
-                )}
-              </Button>
-            </Box>
-            <Box>
-              <Grid gap={2} templateColumns={"6fr 1fr"}>
-                <Text display={"block"} as="b" noOfLines={1} fontSize="md">
-                  {title}
-                </Text>
-                <HStack
-                  _hover={{
-                    color: "red.100",
-                  }}
-                  spacing={1}
-                  alignItems={"center"}
-                >
-                  <FaStar size={15} />
-                  <Text>{rating}.0</Text>
-                </HStack>
-              </Grid>
-              <Text fontSize={"sm"} color="gray.600">
-                {author}
+            <Grid gap={2} templateColumns={"6fr 1fr"}>
+              <Text display={"block"} as="b" noOfLines={1} fontSize="md">
+                {title}
               </Text>
-            </Box>
-            <Text fontSize={"sm"} color="gray.600" as="b">
-              published by
+              <HStack
+                _hover={{
+                  color: "red.100",
+                }}
+                spacing={1}
+                alignItems={"center"}
+              >
+                <FaStar size={15} />
+                <Text>{rating}.0</Text>
+              </HStack>
+            </Grid>
+            <Text fontSize={"sm"} color="gray.600">
+              {author}
             </Text>
           </Box>
-        ) : null}
+          <Text fontSize={"sm"} color="gray.600" as="b">
+            {review_title}
+          </Text>
+        </Box>
       </VStack>
     </Link>
   );
