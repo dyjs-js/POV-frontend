@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { createGptPhoto, getBook, likeBook } from "../api";
 import { IBookDetail } from "../types";
 import {
@@ -30,6 +30,7 @@ export default function BookDetail() {
   });
   const toast = useToast();
   const queryClient = useQueryClient();
+
   const createGptPhotoMutation = useMutation({
     mutationFn: createGptPhoto,
     onSuccess: (data: any) => {
@@ -88,6 +89,7 @@ export default function BookDetail() {
       });
     }
   };
+
   return (
     <Box
       mt={10}
@@ -115,8 +117,9 @@ export default function BookDetail() {
               leftIcon={<FaPaintBrush />}
               colorScheme={"gray"}
               variant="outline"
+              isLoading={createGptPhotoMutation.isPending}
             >
-              AI 이미지 생성
+              AI image
             </Button>
           </Box>
           <Box px={5}>
@@ -133,7 +136,10 @@ export default function BookDetail() {
             <Menu>
               <MenuButton as={Button}>edit</MenuButton>
               <MenuList>
-                <MenuItem>edit</MenuItem>
+                <Link to={`/books/${bookPk}/edit`}>
+                  <MenuItem>edit</MenuItem>
+                </Link>
+
                 <MenuItem>delete</MenuItem>
               </MenuList>
             </Menu>
@@ -201,7 +207,7 @@ export default function BookDetail() {
       <VStack>
         <Box>
           <Text>{data?.created_at}</Text>
-          <Text>{data?.content}</Text>
+          <Text whiteSpace="pre-line">{data?.content}</Text>
         </Box>
       </VStack>
       <Box mt={10} mb={10}>

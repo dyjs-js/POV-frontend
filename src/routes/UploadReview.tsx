@@ -72,7 +72,7 @@ export default function UploadReview() {
             mt={5}
           >
             <FormControl>
-              <FormLabel>리뷰 종류</FormLabel>
+              <FormLabel>Review Type</FormLabel>
               <Select
                 placeholder="Select review type"
                 onChange={handleReviewTypeChange}
@@ -104,7 +104,7 @@ export default function UploadReview() {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>작가</FormLabel>
+                  <FormLabel>Author</FormLabel>
                   <Input
                     {...register("author", { required: true })}
                     required
@@ -112,9 +112,9 @@ export default function UploadReview() {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>출판사</FormLabel>
+                  <FormLabel>Publisher</FormLabel>
                   <Input {...register("publisher")} type="text" />
-                  <FormHelperText>필수 항목이 아닙니다.</FormHelperText>
+                  <FormHelperText>Not required</FormHelperText>
                 </FormControl>
               </>
             )}
@@ -128,7 +128,7 @@ export default function UploadReview() {
                   </FormHelperText>
                 </FormControl>
                 <FormControl>
-                  <FormLabel>영화 제목</FormLabel>
+                  <FormLabel>Movie</FormLabel>
                   <Input required type="text" />
                 </FormControl>
                 <FormControl>
@@ -143,15 +143,15 @@ export default function UploadReview() {
               </>
             )}
             <FormControl>
-              <FormLabel>내용</FormLabel>
+              <FormLabel>Content</FormLabel>
               <Textarea {...register("content", { required: true })} />
             </FormControl>
             <FormControl>
-              <FormLabel>요약된 내용</FormLabel>
+              <FormLabel>삭제예정</FormLabel>
               <Textarea {...register("summary", { required: true })} />
             </FormControl>
             <FormControl>
-              <FormLabel>별점</FormLabel>
+              <FormLabel>Rating</FormLabel>
               <NumberInput min={1} max={5}>
                 <NumberInputField {...register("rating", { required: true })} />
                 <NumberInputStepper>
@@ -162,7 +162,10 @@ export default function UploadReview() {
             </FormControl>
 
             <FormControl>
-              <Checkbox {...register("is_public", { required: true })}>
+              <Checkbox
+                defaultChecked
+                {...register("is_public", { required: true })}
+              >
                 Is public?
               </Checkbox>
             </FormControl>

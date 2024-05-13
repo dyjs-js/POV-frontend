@@ -7,6 +7,7 @@ import BookDetail from "./routes/BookDetail";
 import MyPage from "./routes/MyPage";
 import UploadReview from "./routes/UploadReview";
 import UploadPhotos from "./routes/UploadPhotos";
+import ReviewEdit from "./routes/ReviewEdit";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "books/:bookPk/photos",
         element: <UploadPhotos />,
+      },
+      {
+        path: "books/:bookPk/edit",
+        element: <ReviewEdit />,
       },
     ],
   },

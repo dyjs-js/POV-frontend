@@ -140,3 +140,33 @@ export const createGptPhoto = (bookPk: string) =>
       },
     })
     .then((response) => response.data);
+
+export interface IEditBookVariables {
+  review_title: string;
+  title: string;
+  author: string;
+  publisher: string;
+  content: string;
+  summary: string;
+  is_public: boolean;
+  rating: number;
+  bookPk: string;
+}
+
+export const editBook = (variables: IEditBookVariables) =>
+  instance
+    .put(`books/${variables.bookPk}`, variables, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
+      },
+    })
+    .then((response) => response.data);
+
+export const deleteBook = (bookPk: string) =>
+  instance
+    .delete(`books/${bookPk}`, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
+      },
+    })
+    .then((response) => response.data);

@@ -15,8 +15,8 @@ todo
 - upload photo [v] 5/12
 - upload gptphoto [v] 5/12
 - gpt photo 시간이 지내면 연결끊기는 문제 -> cloudflare로 전달 후 렌더링 해야할듯[]
-- 게시글 수정 []
-- 게시글 삭제 []
+- 게시글 수정 [v] 5/13
+- 게시글 삭제 [] api는 만들었는데 ui구현에서 조금 문제... 팝업이 작동을 안함
 - signup []
 
 - movie []
@@ -29,6 +29,8 @@ todo
 문제
 - id_liked의 하트가 로그아웃때만 바로 반영이되고 로그인할때는 바로 반영이 안됨 (fetch문제) 
     --> refetchQueries로 처리 [v]
+
+    
 - 일반 photo 업로드 : 사용자가 웹에서 이미지 업로드 -> cloudflare 서버로 업로드 -> 백엔드 서버에 저장 후 렌더링
 - gpt 이미지 업로드 : 웹에서 post로 요청하면 서버에서 gpt이미지 생성 -> cloudflare 업로드 -> cloudflare의 주소로 다시 렌더링..?
 
@@ -37,14 +39,6 @@ todo
 - 카카오톡 login []
 
 
-query - react query를 이용한 ... useQeury는 함수를 지켜보고 있다가 변화가 생기면 캐치함
-//예시
-// const mutation = useMutation({
-//   mutationFn: getUploadURL,
-//   onSuccess: (data: any) => {
-//     console.log(data);
-//   },
-// });
 
 //원래 bookdetail 코드
         {[0, 1].map((index) => (
