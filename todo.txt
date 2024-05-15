@@ -14,8 +14,9 @@ todo
 - My page [v] 5/10~5/11
 - upload photo [v] 5/12
 - upload gptphoto [v] 5/12
-- gpt photo 시간이 지내면 연결끊기는 문제 -> cloudflare로 전달 후 렌더링 해야할듯[]
 - 게시글 수정 [v] 5/13
+- gpt photo 시간이 지내면 연결끊기는 문제 -> cloudflare로 전달 후 렌더링 해야할듯[v] 5/15
+- api/gptcreate/gptphots/1 get/put 만들기 [] 만들어서 put으로 데이터수정
 - 게시글 삭제 [] api는 만들었는데 ui구현에서 조금 문제... 팝업이 작동을 안함
 - signup []
 
@@ -32,7 +33,9 @@ todo
 
     
 - 일반 photo 업로드 : 사용자가 웹에서 이미지 업로드 -> cloudflare 서버로 업로드 -> 백엔드 서버에 저장 후 렌더링
-- gpt 이미지 업로드 : 웹에서 post로 요청하면 서버에서 gpt이미지 생성 -> cloudflare 업로드 -> cloudflare의 주소로 다시 렌더링..?
+- gpt 이미지 업로드 : 웹에서 post로 요청하면 서버에서 gpt이미지 생성 -> cloudflare 업로드 -> cloudflare의 주소로 다시 이미지 렌더링 
+
+- createGptURLMutation -> uploadGptImageMutation -> CreateGptPhotoMutation
 
 나중에 시간되면 할 것
 - github login []

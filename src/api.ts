@@ -132,7 +132,49 @@ export const createPhoto = ({
     )
     .then((response) => response.data);
 
-export const createGptPhoto = (bookPk: string) =>
+export const createGptPhoto = ({ file, bookPk }: ICreatePhotoVariables) =>
+  instance
+    .post(
+      `books/${bookPk}/photos`,
+      { file },
+      {
+        headers: {
+          "X-CSRFToken": Cookie.get("csrftoken") || "",
+        },
+      }
+    )
+    .then((response) => response.data);
+
+export interface IUploadGptImageVariables {
+  file: string;
+  uploadURL: string;
+}
+
+export const uploadGptImage = ({
+  file,
+  uploadURL,
+}: IUploadGptImageVariables) => {
+  const form = new FormData();
+  form.append("url", file);
+  return axios
+    .post(uploadURL, form, {
+      headers: {
+        "content-Type": "multipart/form-data",
+      },
+    })
+    .then((reponse) => reponse.data);
+};
+
+export const getUploadGptURL = () =>
+  instance
+    .post(`gptcreate/gptphotos/get-url`, null, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
+      },
+    })
+    .then((response) => response.data);
+
+export const createGptURL = (bookPk: string) =>
   instance
     .post(`books/${bookPk}/gptphotos`, null, {
       headers: {

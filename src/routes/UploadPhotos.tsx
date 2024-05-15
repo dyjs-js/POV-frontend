@@ -41,7 +41,7 @@ export default function UploadPhotos() {
     mutationFn: uploadImage,
     onSuccess: ({ result }: any) => {
       if (bookPk) {
-        console.log(result);
+        // console.log(result);
         createPhotoMutation.mutate({
           description: "react",
           file: `https://imagedelivery.net/SZx-PvOZyRIpZEuxyLbRUQ/${result.id}/public`,
@@ -53,6 +53,8 @@ export default function UploadPhotos() {
   const uploadURLmutation = useMutation({
     mutationFn: getUploadURL,
     onSuccess: (data: IUploadURLResponse) => {
+      // console.log(watch("file"));
+
       uploadImageMutation.mutate({
         uploadURL: data.uploadURL,
         file: watch("file"),
@@ -62,7 +64,7 @@ export default function UploadPhotos() {
   const onSubmit = (data: any) => {
     uploadURLmutation.mutate();
   };
-  //console.log(watch());
+  // console.log(watch("file"));
   return (
     <ProtectedPage>
       <Box

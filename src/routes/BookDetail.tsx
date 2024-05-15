@@ -1,6 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
-import { createGptPhoto, getBook, likeBook } from "../api";
+import {
+  createGptPhoto,
+  createGptURL,
+  getBook,
+  getUploadGptURL,
+  likeBook,
+  uploadGptImage,
+} from "../api";
 import { IBookDetail } from "../types";
 import {
   Box,
@@ -22,6 +29,11 @@ import {
 } from "@chakra-ui/react";
 import { FaPaintBrush, FaRegHeart } from "react-icons/fa";
 
+interface IUploadGptURLResponse {
+  id: string;
+  uploadURL: string;
+}
+
 export default function BookDetail() {
   const { bookPk } = useParams();
   const { isLoading, data } = useQuery<IBookDetail>({
@@ -30,18 +42,62 @@ export default function BookDetail() {
   });
   const toast = useToast();
   const queryClient = useQueryClient();
-
   const createGptPhotoMutation = useMutation({
     mutationFn: createGptPhoto,
-    onSuccess: (data: any) => {
+    onSuccess: () => {
       toast({
         status: "success",
-        title: "AI Image created!",
+        title: "AI Image Created!",
+      });
+    },
+  });
+  const uploadGptImageMutation = useMutation({
+    mutationFn: uploadGptImage,
+    onMutate: () => {
+      console.log("upload Gpt Image Muatation starting");
+    },
+    onSuccess: ({ result }: any) => {
+      if (bookPk) {
+        // console.log(result);
+        createGptPhotoMutation.mutate({
+          description: "react",
+          file: `https://imagedelivery.net/SZx-PvOZyRIpZEuxyLbRUQ/${result.id}/public`,
+          bookPk,
+        });
+      }
+    },
+    onError: (error) => {
+      console.error("Error:", error);
+    },
+  });
+  const UploadGptURLMutation = useMutation({
+    mutationFn: getUploadGptURL,
+    onMutate: () => {
+      console.log("UploadGptURLMutation starting");
+    },
+    onSuccess: (data: IUploadGptURLResponse, imageurl: string) => {
+      console.log(imageurl);
+      uploadGptImageMutation.mutate({
+        uploadURL: data.uploadURL,
+        file: imageurl,
       });
     },
     onError: (error) => {
+      console.error("Error:", error);
+    },
+  });
+
+  const createGptURLMutation = useMutation({
+    mutationFn: createGptURL,
+    onSuccess: (data: any) => {
+      console.log(data);
+      const imageurl = data.file;
+
+      UploadGptURLMutation.mutate(imageurl); //여기에 발생한 file url전송
+    },
+    onError: (error) => {
       toast({
-        title: "sever connect delayed!",
+        title: "create Gpt URL Mutation faild",
         status: "error",
       });
     },
@@ -50,9 +106,33 @@ export default function BookDetail() {
   const onCreateClick = (event: React.SyntheticEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (bookPk) {
-      createGptPhotoMutation.mutate(bookPk);
+      createGptURLMutation.mutate(bookPk);
     }
   };
+
+  // const createGptURLMutation = useMutation({
+  //   mutationFn: createGptURL,
+  //   onSuccess: (data: any) => {
+  //     console.log(data);
+  //     toast({
+  //       status: "success",
+  //       title: "AI URL created!",
+  //     });
+  //   },
+  //   onError: (error) => {
+  //     toast({
+  //       title: "createGptURLMutation faild",
+  //       status: "error",
+  //     });
+  //   },
+  // });
+
+  // const onCreateClick = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+  //   event.preventDefault();
+  //   if (bookPk) {
+  //     createGptURLMutation.mutate(bookPk);
+  //   }
+  // };
 
   const handleLike = async () => {
     try {
@@ -117,7 +197,7 @@ export default function BookDetail() {
               leftIcon={<FaPaintBrush />}
               colorScheme={"gray"}
               variant="outline"
-              isLoading={createGptPhotoMutation.isPending}
+              isLoading={createGptURLMutation.isPending}
             >
               AI image
             </Button>
