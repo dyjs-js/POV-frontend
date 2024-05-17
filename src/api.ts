@@ -132,6 +132,8 @@ export const createPhoto = ({
     )
     .then((response) => response.data);
 
+// createGptURL-> getUploadGptURL -> uploadGptImage -> createGptPhoto
+
 export const createGptPhoto = ({ file, bookPk }: ICreatePhotoVariables) =>
   instance
     .post(

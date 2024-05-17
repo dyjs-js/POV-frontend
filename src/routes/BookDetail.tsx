@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   createGptPhoto,
   createGptURL,
+  deleteBook,
   getBook,
   getUploadGptURL,
   likeBook,
@@ -26,6 +27,14 @@ import {
   MenuList,
   MenuItem,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalCloseButton,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { FaPaintBrush, FaRegHeart } from "react-icons/fa";
 
@@ -40,17 +49,22 @@ export default function BookDetail() {
     queryKey: [`books`, bookPk],
     queryFn: getBook,
   });
+
   const toast = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  //cloudflare에 저장된 이미지 서버로 다시 전달
   const createGptPhotoMutation = useMutation({
     mutationFn: createGptPhoto,
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       toast({
         status: "success",
         title: "AI Image Created!",
       });
     },
   });
+  //cloudflare에 이미지 저장
   const uploadGptImageMutation = useMutation({
     mutationFn: uploadGptImage,
     onMutate: () => {
@@ -58,9 +72,8 @@ export default function BookDetail() {
     },
     onSuccess: ({ result }: any) => {
       if (bookPk) {
-        // console.log(result);
         createGptPhotoMutation.mutate({
-          description: "react",
+          description: "ai image",
           file: `https://imagedelivery.net/SZx-PvOZyRIpZEuxyLbRUQ/${result.id}/public`,
           bookPk,
         });
@@ -70,10 +83,11 @@ export default function BookDetail() {
       console.error("Error:", error);
     },
   });
+  //cloudflare 저장을 위해 url가져오기
   const UploadGptURLMutation = useMutation({
     mutationFn: getUploadGptURL,
     onMutate: () => {
-      console.log("UploadGptURLMutation starting");
+      console.log("Upload Gpt URL Mutation starting");
     },
     onSuccess: (data: IUploadGptURLResponse, imageurl: string) => {
       console.log(imageurl);
@@ -103,41 +117,33 @@ export default function BookDetail() {
     },
   });
 
+  const deleteReviewMutation = useMutation({
+    mutationFn: deleteBook,
+    onSuccess: () => {
+      toast({
+        status: "success",
+        title: "Delete Success",
+      });
+      navigate(`/`);
+    },
+  });
+
   const onCreateClick = (event: React.SyntheticEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (bookPk) {
       createGptURLMutation.mutate(bookPk);
     }
   };
-
-  // const createGptURLMutation = useMutation({
-  //   mutationFn: createGptURL,
-  //   onSuccess: (data: any) => {
-  //     console.log(data);
-  //     toast({
-  //       status: "success",
-  //       title: "AI URL created!",
-  //     });
-  //   },
-  //   onError: (error) => {
-  //     toast({
-  //       title: "createGptURLMutation faild",
-  //       status: "error",
-  //     });
-  //   },
-  // });
-
-  // const onCreateClick = (event: React.SyntheticEvent<HTMLButtonElement>) => {
-  //   event.preventDefault();
-  //   if (bookPk) {
-  //     createGptURLMutation.mutate(bookPk);
-  //   }
-  // };
+  const onDeleteClick = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (bookPk) {
+      deleteReviewMutation.mutate(bookPk);
+    }
+  };
 
   const handleLike = async () => {
     try {
       if (!data) return;
-
       if (data.is_liked) {
         // 이미 좋아요한 경우, 좋아요 취소 요청 보내기
         await likeBook(data.id);
@@ -145,12 +151,9 @@ export default function BookDetail() {
         // 좋아요하지 않은 경우, 좋아요 요청 보내기
         await likeBook(data.id);
       }
-
-      // 새로운 데이터를 가져오기 위해 쿼리 재요청
       queryClient.invalidateQueries({
         queryKey: [`books`, bookPk],
       });
-
       toast({
         title: "Success",
         description: data.is_liked ? "Unliked the book." : "Liked the book.",
@@ -213,16 +216,33 @@ export default function BookDetail() {
             </Button>
           </Box>
           {data?.is_owner ? (
-            <Menu>
-              <MenuButton as={Button}>edit</MenuButton>
-              <MenuList>
-                <Link to={`/books/${bookPk}/edit`}>
-                  <MenuItem>edit</MenuItem>
-                </Link>
+            <>
+              <Link to={`/books/${bookPk}/edit`}>
+                <Button>EDIT</Button>
+              </Link>
+              <Button onClick={onOpen}>DELETE</Button>
+              <Modal
+                closeOnOverlayClick={false}
+                isOpen={isOpen}
+                onClose={onClose}
+              >
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Delete Confirmation</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody pb={6}>
+                    <Text>Are you sure you want to delete this review?</Text>
+                  </ModalBody>
 
-                <MenuItem>delete</MenuItem>
-              </MenuList>
-            </Menu>
+                  <ModalFooter>
+                    <Button onClick={onDeleteClick} mr={3}>
+                      Delete
+                    </Button>
+                    <Button onClick={onClose}>Cancel</Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </>
           ) : null}
         </HStack>
       </HStack>
@@ -260,7 +280,7 @@ export default function BookDetail() {
                 w="100%"
                 src={
                   data?.gptphotos && data.gptphotos.length > 0
-                    ? data?.gptphotos[0].file
+                    ? data?.photos[data.photos.length - 1].file
                     : data?.photos[1]?.file
                 }
               />
