@@ -118,6 +118,8 @@ export default function MyPage() {
               <MainSkeleton />
               <MainSkeleton />
               <MainSkeleton />
+              <MainSkeleton />
+              <MainSkeleton />
             </>
           ) : (
             <>
@@ -138,6 +140,7 @@ export default function MyPage() {
                       is_liked={book.is_liked}
                       is_public={book.is_public}
                       rating={book.rating}
+                      showPrivate={true}
                     />
                   ))}
             </>

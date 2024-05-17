@@ -20,6 +20,7 @@ interface BookProps {
   is_liked: boolean;
   is_public: boolean;
   is_owner: boolean;
+  showPrivate?: boolean;
 }
 
 export default function Book({
@@ -32,13 +33,14 @@ export default function Book({
   is_owner,
   is_public,
   rating,
+  showPrivate = false,
 }: BookProps) {
   const navigate = useNavigate();
   const onCameraClick = (event: React.SyntheticEvent<HTMLButtonElement>) => {
     event.preventDefault();
     navigate(`/books/${pk}/photos`);
   };
-  if (!is_public) {
+  if (!is_public && !showPrivate) {
     return null; // is_public이 false인 경우 아무것도 렌더링하지 않음
   }
   return (

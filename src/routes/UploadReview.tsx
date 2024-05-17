@@ -146,10 +146,10 @@ export default function UploadReview() {
               <FormLabel>Content</FormLabel>
               <Textarea {...register("content", { required: true })} />
             </FormControl>
-            <FormControl>
+            {/* <FormControl>
               <FormLabel>삭제예정</FormLabel>
               <Textarea {...register("summary", { required: true })} />
-            </FormControl>
+            </FormControl> */}
             <FormControl>
               <FormLabel>Rating</FormLabel>
               <NumberInput min={1} max={5}>

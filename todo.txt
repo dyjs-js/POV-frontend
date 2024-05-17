@@ -16,8 +16,8 @@ todo
 - upload gptphoto [v] 5/12
 - 게시글 수정 [v] 5/13
 - gpt photo 시간이 지내면 연결끊기는 문제 -> cloudflare로 전달 후 렌더링 해야할듯[v] 5/15
-- api/gptcreate/gptphots/1 get/put 만들기 [] 만들어서 put으로 데이터수정
-- 게시글 삭제 [] api는 만들었는데 ui구현에서 조금 문제... 팝업이 작동을 안함
+- api/gptcreate/gptphots/1 get/put 만들기 [v] 만들어서 put으로 데이터수정 -> medias/photos로 post
+- 게시글 삭제 [v] api는 만들었는데 ui구현에서 조금 문제... 팝업이 작동을 안함
 - signup []
 
 - movie []

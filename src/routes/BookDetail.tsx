@@ -271,7 +271,15 @@ export default function BookDetail() {
           <GridItem key={index}>
             {/* 첫 번째 이미지 */}
             {index === 0 && (
-              <Image objectFit="cover" w="100%" src={data?.photos[0].file} />
+              <Image
+                objectFit="cover"
+                w="100%"
+                src={
+                  data?.photos && data.photos.length > 0
+                    ? data?.photos[0].file
+                    : "https://source.unsplash.com/random/400x400/?star"
+                }
+              />
             )}
             {/* 두 번째 이미지 */}
             {index === 1 && (
@@ -281,7 +289,9 @@ export default function BookDetail() {
                 src={
                   data?.gptphotos && data.gptphotos.length > 0
                     ? data?.photos[data.photos.length - 1].file
-                    : data?.photos[1]?.file
+                    : data?.photos && data?.photos.length > 1
+                    ? data?.photos[1].file
+                    : "https://source.unsplash.com/random/400x400/?star"
                 }
               />
             )}

@@ -113,10 +113,10 @@ export default function ReviewEdit() {
               <FormLabel>내용</FormLabel>
               <Textarea {...register("content")} defaultValue={data?.content} />
             </FormControl>
-            <FormControl>
+            {/* <FormControl>
               <FormLabel>요약된 내용</FormLabel>
               <Textarea {...register("summary")} defaultValue={data?.summary} />
-            </FormControl>
+            </FormControl> */}
             <FormControl>
               <FormLabel>별점</FormLabel>
               <NumberInput defaultValue={data?.rating} min={1} max={5}>
@@ -132,7 +132,9 @@ export default function ReviewEdit() {
             </FormControl>
 
             <FormControl>
-              <Checkbox {...register("is_public")}>Is public?</Checkbox>
+              <Checkbox defaultChecked={true} {...register("is_public")}>
+                Is public?
+              </Checkbox>
             </FormControl>
             {editBookMutation.isError ? (
               <>
